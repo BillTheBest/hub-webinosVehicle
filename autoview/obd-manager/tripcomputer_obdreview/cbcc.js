@@ -227,7 +227,7 @@ function bindToGeolocation(){
 	geolocation.bindService({onBind:function(service) {
 		updateStatus('Bound to Geolocation service');
 		registerGeoListener();
-		findDeviceOrientation();
+        $('#loading').addClass('disabled');//findDeviceOrientation();
 	}});
 }
 function bindToDeviceOrientation(){
@@ -331,7 +331,7 @@ function registersensorsListeners(api){
 
         updateStatus('sensors listeners registered.');
 	sensors[api].addEventListener('sensor', handleAverageData, false);
-	findGeolocation();
+	//findGeolocation();
 }
 
 
@@ -362,9 +362,105 @@ function fillPZAddrs(data) {
 	  pzhId = data.payload.message.pzhId;                                     
 	  connectedPzp = data.payload.message.connectedPzp; // all connected pzp
 	  connectedPzh = data.payload.message.connectedPzh; // all connected pzh
-		findsensors();
-		//findGeolocation();
+	  findsensors();
+//	  findGeolocation();
+        //DiscoverSensors();
 	}
+}
+
+function DiscoverSensors(){
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/rpm"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            rpm_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/vss"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            vss_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/temp"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            temp_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/throttlepos"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            throttlepos_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
 }
 
 $(document).ready(function() {
@@ -484,98 +580,7 @@ $(document).ready(function() {
 
             createGauge();    
 
-            webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/rpm"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
 
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    rpm_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-         webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/vss"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    vss_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-         webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/temp"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    temp_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-
-          webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/throttlepos"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    throttlepos_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
 
 
 
