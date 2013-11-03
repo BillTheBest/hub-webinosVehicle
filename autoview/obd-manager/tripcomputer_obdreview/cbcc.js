@@ -75,11 +75,18 @@ function initializeMap() {
     
    mapBounds = map.getBounds();
 }
-
+var _timer = null;
 function updateStatus(text){
+    if (_timer) clearTimeout(_timer);
+	$('#loading').removeClass('disabled');
 	$('#loadingstatus').html(text);
+	_timer = setTimeout(hideStatus,2000);
 }
 
+function hideStatus(){
+$('#loading').addClass('disabled');
+_timer = null;
+}
 
 function getLinkObj(hash){
 	switch(hash){
@@ -227,7 +234,7 @@ function bindToGeolocation(){
 	geolocation.bindService({onBind:function(service) {
 		updateStatus('Bound to Geolocation service');
 		registerGeoListener();
-        $('#loading').addClass('disabled');//findDeviceOrientation();
+        //findDeviceOrientation();
 	}});
 }
 function bindToDeviceOrientation(){
@@ -331,6 +338,7 @@ function registersensorsListeners(api){
 
         updateStatus('sensors listeners registered.');
 	sensors[api].addEventListener('sensor', handleAverageData, false);
+	
 	//findGeolocation();
 }
 
@@ -627,10 +635,26 @@ function handleGear(data){
 
 function handleAverageData(data){
        // alert(JSON.stringify(data));
-	if(data.sensorType === "http://webinos.org/api/sensors/rpm") $('#v-consumption').html(data.sensorValues[0]);
-	if(data.sensorType === "http://webinos.org/api/sensors/vss") $('#v-avg-speed').html(data.sensorValues[0]);
-        if(data.sensorType === "http://webinos.org/api/sensors/temp") $('#v-mileage').html(data.sensorValues[0]);
-	if(data.sensorType === "http://webinos.org/api/sensors/load_pct") $('#v-distance').html(data.sensorValues[0]);
+	   // rpm_sensor.addEventListener("sensor", onSensorEvent, false);
+	// vss_sensor.addEventListener("sensor", , false);
+	// temp_sensor.addEventListener("sensor", onSensorEvent2, false);
+	// throttlepos_sensor.addEventListener("sensor", onSensorEvent3, false);
+	if(data.sensorType === "http://webinos.org/api/sensors/rpm") {
+		$('#v-consumption').html(data.sensorValues[0]);
+		onSensorEvent(data);
+	};
+	if(data.sensorType === "http://webinos.org/api/sensors/vss"){
+		$('#v-avg-speed').html(data.sensorValues[0]);
+		onSensorEvent1(data);
+	}
+        if(data.sensorType === "http://webinos.org/api/sensors/temp") {
+		$('#v-mileage').html(data.sensorValues[0]);
+		onSensorEvent2(data);
+	}
+	if(data.sensorType === "http://webinos.org/api/sensors/load_pct") {
+	$('#v-distance').html(data.sensorValues[0]);
+	onSensorEvent3(data);
+	}
         if(data.sensorType === "http://webinos.org/api/sensors/frp") $('#v-range').html(data.sensorValues[0]);
 
      // if(data.sensorType === "http://webinos.org/api/sensors/rpm") $('#v-consumption').html(data.rpm);
