@@ -55,7 +55,7 @@ dataModel = [{id: 'selecter-gear', desc:'Gear' , unit: '', defaultV:'10', custom
 
 function initializeMap() {
     var mapOptions = {
-      zoom: 15,
+      zoom: 16,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: centerPoint,
       scaleControl: false,
@@ -70,7 +70,8 @@ function initializeMap() {
     marker = new google.maps.Marker({
       map:map,
       animation: google.maps.Animation.DROP,
-      position: markerPoint
+      position: markerPoint,
+        icon: "./car.png"
     });
     
    mapBounds = map.getBounds();
