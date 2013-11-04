@@ -111,7 +111,7 @@ function logMessage(msg) {
 	if (msg) {
 		$('#message').append('<li>' + msg + '</li>');
 	}
-}	
+}
 
 function handleHashChange(){
 	if((window.location.hash == '#drive' || window.location.hash == '#travel' || window.location.hash == '#check' || window.location.hash == '#geek') && active != window.location.hash){
@@ -124,6 +124,7 @@ function handleHashChange(){
 		switch(active){
 			case "#drive":
 				$('#nav1').focus();
+                resizeGauges();
 				break;
 			case "#travel":
 				$('#nav2').focus();
@@ -294,21 +295,21 @@ function onSensorEvent3(event){
 
 
 function createGauge(){
-            gauge = new RGraph.Gauge("gauge_placeholder", 0, 17000, 0);
+            gauge = new RGraph.Gauge("gauge_placeholder", 0, 6000, 0);
             gauge.Set('chart.title.top','RPM');
             gauge.Set('chart.title.top.bold','true');
             gauge.Set('chart.title.bottom','rev/min');
             gauge.Set('chart.title.bottom.size','8');
             RGraph.Effects.Gauge.Grow(gauge);
 
-            gauge1 = new RGraph.Gauge("gauge_placeholder1", 0, 400, 0);
+            gauge1 = new RGraph.Gauge("gauge_placeholder1", 0, 160, 0);
             gauge1.Set('chart.title.top','Speed');
             gauge1.Set('chart.title.top.bold','true');
             gauge1.Set('chart.title.bottom','km/h');
             gauge1.Set('chart.title.bottom.size','8');
             RGraph.Effects.Gauge.Grow(gauge1);
 
-            gauge2 = new RGraph.Gauge("gauge_placeholder2", -40, 215, 0);
+            gauge2 = new RGraph.Gauge("gauge_placeholder2", 70, 120, 0);
             gauge2.Set('chart.title.top','Engine Temp');
             gauge2.Set('chart.title.top.bold','true');
             gauge2.Set('chart.title.bottom','Celsius');
@@ -371,7 +372,7 @@ function fillPZAddrs(data) {
 	  connectedPzp = data.payload.message.connectedPzp; // all connected pzp
 	  connectedPzh = data.payload.message.connectedPzh; // all connected pzh
 	  findsensors();
-//	  findGeolocation();
+	  findGeolocation();
         //DiscoverSensors();
 	}
 }
@@ -470,8 +471,38 @@ function DiscoverSensors(){
         }
     });
 }
+function resizeGauges(){
+//    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    var newW = ($('#gauges').width()-10)/2;
+    var newH = ($('#gauges').height()-10)/2;
+    var newVal = newW;
+    if (newVal>newH){
+        newVal = newH;
+    }
+    $('#gauge_placeholder').width(newVal);
+    $('#gauge_placeholder').height(newVal);
+    $('#gauge_placeholder1').width(newVal);
+    $('#gauge_placeholder1').height(newVal);
+    $('#gauge_placeholder2').width(newVal);
+    $('#gauge_placeholder2').height(newVal);
+    $('#gauge_placeholder3').width(newVal);
+    $('#gauge_placeholder3').height(newVal);
 
+//    $('#bc-nav li').each(function(){
+//        var $this = $(this);
+//        var $text = $this.children(".toplevellink")[0];
+//        if ($this.width()<$text.width){
+//
+//        }
+//    })
+}
+var resizeTimer=null;
 $(document).ready(function() {
+    jQuery(window).resize(function(){
+        if (resizeTimer!=null) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resizeGauges, 100);
+    });
+    resizeGauges();
 	$('#nav1').focus();
 	//HELPERS FOR OVERSCROLLING SELECTION LIST
 	$('#selection-start').bind('focus', function(){
@@ -572,26 +603,7 @@ $(document).ready(function() {
 			handleHashChange();
 	});
 
-	   $(document).on("click","#start_but", function(event){
-                rpm_sensor.addEventListener("sensor", onSensorEvent, false);
-                vss_sensor.addEventListener("sensor", onSensorEvent1, false);
-                temp_sensor.addEventListener("sensor", onSensorEvent2, false);
-                throttlepos_sensor.addEventListener("sensor", onSensorEvent3, false);
-            });
-
-            $(document).on("click","#stop_but", function(event){
-                rpm_sensor.removeEventListener("sensor", onSensorEvent, false);
-                vss_sensor.removeEventListener("sensor", onSensorEvent1, false);
-                temp_sensor.removeEventListener("sensor", onSensorEvent2, false);
-                throttlepos_sensor.removeEventListener("sensor", onSensorEvent3, false);
-            });
-
-            createGauge();    
-
-
-
-
-
+    createGauge();
 	initializeMap();
 	webinos.session.addListener('registeredBrowser', fillPZAddrs);
 	webinos.session.addListener('update', updatePZAddrs);
@@ -634,11 +646,6 @@ function handleGear(data){
 
 
 function handleAverageData(data){
-       // alert(JSON.stringify(data));
-	   // rpm_sensor.addEventListener("sensor", onSensorEvent, false);
-	// vss_sensor.addEventListener("sensor", , false);
-	// temp_sensor.addEventListener("sensor", onSensorEvent2, false);
-	// throttlepos_sensor.addEventListener("sensor", onSensorEvent3, false);
 	if(data.sensorType === "http://webinos.org/api/sensors/rpm") {
 		$('#v-consumption').html(data.sensorValues[0]);
 		onSensorEvent(data);
