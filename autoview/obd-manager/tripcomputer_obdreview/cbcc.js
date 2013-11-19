@@ -649,7 +649,7 @@ function handleGear(data){
 
 function handleAverageData(data){
 	if(data.sensorType === "http://webinos.org/api/sensors/rpm") {
-		$('#v-consumption').html(data.sensorValues[0]);
+		$('#v-consumption').html(data.sensorValues[0].toFixed(2));
 		onSensorEvent(data);
 	};
 	if(data.sensorType === "http://webinos.org/api/sensors/vss"){
@@ -661,7 +661,7 @@ function handleAverageData(data){
 		onSensorEvent2(data);
 	}
 	if(data.sensorType === "http://webinos.org/api/sensors/load_pct") {
-	$('#v-distance').html(data.sensorValues[0]);
+	$('#v-distance').html(data.sensorValues[0].toFixed(2));
 	onSensorEvent3(data);
 	}
         if(data.sensorType === "http://webinos.org/api/sensors/frp") $('#v-range').html(data.sensorValues[0]);
