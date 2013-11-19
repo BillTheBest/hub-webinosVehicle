@@ -315,10 +315,11 @@ function createGauge(){
             gauge2.Set('chart.title.top.bold','true');
             gauge2.Set('chart.title.bottom','Celsius');
             gauge2.Set('chart.title.bottom.size','8');
+            gauge2.value = 80;
             RGraph.Effects.Gauge.Grow(gauge2);
 
             gauge3 = new RGraph.Gauge("gauge_placeholder3", 1, 100, 0);
-            gauge3.Set('chart.title.top','Throttle Pos');
+            gauge3.Set('chart.title.top','Engine Load');
             gauge3.Set('chart.title.top.bold','true');
             gauge3.Set('chart.title.bottom','%');
             gauge3.Set('chart.title.bottom.size','8');
