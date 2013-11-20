@@ -10,9 +10,9 @@ var map;
 var geocoder;
 var mapBounds;
 var allServices = {};
-var sensors = {};
+var sensors = null;
 var sensorActive = {};
-var geolocation;
+var geolocation = null;
 var deviceorientation;
 var ps;
 
@@ -82,6 +82,7 @@ function updateStatus(text){
     if (_timer) clearTimeout(_timer);
 	$('#loading').removeClass('disabled');
 	$('#loadingstatus').html(text);
+    console.log(text);
 	_timer = setTimeout(hideStatus,2000);
 }
 
@@ -165,6 +166,7 @@ function findsensors(){
 	webinos.discovery.findServices(
  	new ServiceType('http://webinos.org/api/sensors/*'),
  	{onFound: function (service) {
+        carDevice.deadcar = false;
 		updateStatus('sensors service found');
 		//sensors[service.api] = service;
 		//bindToSensors(service.api);
@@ -204,6 +206,7 @@ function findGeolocation(){
 	//new ServiceType('http://webinos.org/api/w3c/geolocation'),
  	new ServiceType('http://www.w3.org/ns/api-perms/geolocation'),
  	{onFound: function (service) {
+        carDevice.deadgeo = false;
 		updateStatus('geolocation service found');
 		geolocation = service;
 		bindToGeolocation();
@@ -385,8 +388,10 @@ function promptDeviceSelection() {
 function findRequiredApis() {
 //    if (!carDevice.changed) return;
     carDevice.changed = false;
-    findsensors();
-    findGeolocation();
+    if (carDevice.deadcar || sensors==null)
+        findsensors();
+    if (carDevice.deadgeo || geolocation==null)
+        findGeolocation();
 }
 function deviceListChanged() {
     if (checkCarDevice()){
@@ -402,6 +407,7 @@ function checkCarDevice() {
         return false;
     }
     var geoOk = false, obdOk = false;
+
     for (var i = 0; i < webinos.session.getConnectedPzp().length; i++) {
         var tmpDevice = webinos.session.getConnectedPzp()[i];
         if (tmpDevice.isConnected || typeof tmpDevice.isConnected === "undefined"){
@@ -409,17 +415,18 @@ function checkCarDevice() {
                 geoOk = true;
                 carDevice.geo = tmpDevice;
             }
-
             if (carDevice.obd && carDevice.obd.id == tmpDevice.id){
                 obdOk = true;
                 carDevice.obd = tmpDevice;
             }
-
-            if (geoOk && obdOk)
-                return true
         }
     }
-    return false;
+    if (!carDevice.deadcar)
+        carDevice.deadcar = !obdOk;
+    if (!carDevice.deadgeo)
+        carDevice.deadgeo = !geoOk;
+
+    return (geoOk && obdOk);
 }
 var carDevice = {
     geo: null,
@@ -705,6 +712,7 @@ function handleGear(data){
 
 
 function handleAverageData(data){
+//    console.log("Data arrived from "+data.sensorType);
 	if(data.sensorType === "http://webinos.org/api/sensors/rpm") {
 		$('#v-consumption').html(data.sensorValues[0].toFixed(2));
 		onSensorEvent(data);
@@ -763,6 +771,7 @@ function handleAverageData(data){
 
 
 function handlePosition(data){
+//    console.log("Data arrived from Geolocation");
     if (!mapLoaded) return;
 	//logMessage(data.coords.latitude + ' - ' + data.coords.longitude);
 	var uPos = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
