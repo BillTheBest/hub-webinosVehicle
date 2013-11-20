@@ -1,6 +1,10 @@
-var centerPoint = new google.maps.LatLng(41.38765942141657, 2.1694680888855373);
-var markerPoint = new google.maps.LatLng(41.38765942141657, 2.1694680888855373);
-var marker;
+var centerPoint = new google.maps.LatLng(54.525961, 15.255119);//Europe
+var centerBounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(35.036881, -11.024178), //SW
+    new google.maps.LatLng(61.777099, 29.405509)   //NE
+);
+var marker = null;
+var mapLoaded = false;
 var position;
 var map;
 var geocoder;
@@ -55,7 +59,7 @@ dataModel = [{id: 'selecter-gear', desc:'Gear' , unit: '', defaultV:'10', custom
 
 function initializeMap() {
     var mapOptions = {
-      zoom: 16,
+      zoom: 4,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: centerPoint,
       scaleControl: false,
@@ -64,17 +68,14 @@ function initializeMap() {
       mapTypeControl: false
       
     };
-
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    geocoder = new google.maps.Geocoder();
-    marker = new google.maps.Marker({
-      map:map,
-      animation: google.maps.Animation.DROP,
-      position: markerPoint,
-        icon: "./car.png"
+//    geocoder = new google.maps.Geocoder();
+    map.fitBounds(centerBounds);
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+        mapLoaded = true;
     });
     
-   mapBounds = map.getBounds();
+   var mapBounds = map.getBounds();
 }
 var _timer = null;
 function updateStatus(text){
@@ -191,7 +192,7 @@ function findsensors(){
 				sensors[service.api] = service;
 				bindToSensors(service.api);  
 			}
-	}});
+	}},{},{zoneId:[carDevice.obd.id]});
 }
 
 function findGeolocation(){
@@ -206,7 +207,7 @@ function findGeolocation(){
 		updateStatus('geolocation service found');
 		geolocation = service;
 		bindToGeolocation();
-	}});
+	}},{},{zoneId:[carDevice.geo.id]});
 }
 
 function findDeviceOrientation(){
@@ -296,14 +297,14 @@ function onSensorEvent3(event){
 
 
 function createGauge(){
-            gauge = new RGraph.Gauge("gauge_placeholder", 0, 6000, 0);
+            gauge = new RGraph.Gauge("gauge_placeholder", 0, 8000, 0);
             gauge.Set('chart.title.top','RPM');
             gauge.Set('chart.title.top.bold','true');
-            gauge.Set('chart.title.bottom','rev/min');
+            gauge.Set('chart.title.bottom','rpm');
             gauge.Set('chart.title.bottom.size','8');
             RGraph.Effects.Gauge.Grow(gauge);
 
-            gauge1 = new RGraph.Gauge("gauge_placeholder1", 0, 160, 0);
+            gauge1 = new RGraph.Gauge("gauge_placeholder1", 0, 180, 0);
             gauge1.Set('chart.title.top','Speed');
             gauge1.Set('chart.title.top.bold','true');
             gauge1.Set('chart.title.bottom','km/h');
@@ -313,7 +314,7 @@ function createGauge(){
             gauge2 = new RGraph.Gauge("gauge_placeholder2", 70, 120, 0);
             gauge2.Set('chart.title.top','Engine Temp');
             gauge2.Set('chart.title.top.bold','true');
-            gauge2.Set('chart.title.bottom','Celsius');
+            gauge2.Set('chart.title.bottom','°C');
             gauge2.Set('chart.title.bottom.size','8');
             gauge2.value = 80;
             RGraph.Effects.Gauge.Grow(gauge2);
@@ -348,8 +349,8 @@ function registersensorsListeners(api){
 
 function registerGeoListener(){
 	var params = {};
-	geolocation.getCurrentPosition(handlePosition, errorCB, params);
-	ps = geolocation.watchPosition(handlePosition,errorCB, params);
+//	geolocation.getCurrentPosition(handlePosition, errorCB, params);
+	ps = geolocation.watchPosition(handlePosition, errorCB, params);
 }
 
 function registerDoListener(){
@@ -378,6 +379,53 @@ function fillPZAddrs(data) {
         //DiscoverSensors();
 	}
 }
+function promptDeviceSelection() {
+    displaySwitcher();
+}
+function findRequiredApis() {
+//    if (!carDevice.changed) return;
+    carDevice.changed = false;
+    findsensors();
+    findGeolocation();
+}
+function deviceListChanged() {
+    if (checkCarDevice()){
+        findRequiredApis();
+    }else{
+        promptDeviceSelection();
+    }
+}
+
+function checkCarDevice() {
+    updateOptions();
+    if (carDevice.geo == null || carDevice.obd == null){
+        return false;
+    }
+    var geoOk = false, obdOk = false;
+    for (var i = 0; i < webinos.session.getConnectedPzp().length; i++) {
+        var tmpDevice = webinos.session.getConnectedPzp()[i];
+        if (tmpDevice.isConnected || typeof tmpDevice.isConnected === "undefined"){
+            if (carDevice.geo && carDevice.geo.id == tmpDevice.id){
+                geoOk = true;
+                carDevice.geo = tmpDevice;
+            }
+
+            if (carDevice.obd && carDevice.obd.id == tmpDevice.id){
+                obdOk = true;
+                carDevice.obd = tmpDevice;
+            }
+
+            if (geoOk && obdOk)
+                return true
+        }
+    }
+    return false;
+}
+var carDevice = {
+    geo: null,
+    obd: null,
+    changed: false
+};
 
 function DiscoverSensors(){
     webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/rpm"), {
@@ -500,6 +548,15 @@ function resizeGauges(){
 }
 var resizeTimer=null;
 $(document).ready(function() {
+    if (typeof localStorage != "undefined" && localStorage.getItem("vehicleHubCarDevice")){
+        var stored = null;
+        try {
+            stored = JSON.parse(localStorage.getItem("vehicleHubCarDevice"));
+        }catch(e){}
+        if (stored!=null)
+            carDevice = stored;
+        carDevice.changed = true;
+    }
     jQuery(window).resize(function(){
         if (resizeTimer!=null) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(resizeGauges, 100);
@@ -607,10 +664,10 @@ $(document).ready(function() {
 
     createGauge();
 	initializeMap();
-	webinos.session.addListener('registeredBrowser', fillPZAddrs);
-	webinos.session.addListener('update', updatePZAddrs);
+	webinos.session.addListener('registeredBrowser', deviceListChanged);
+	webinos.session.addListener('update', deviceListChanged);
 	startUp();
-	handleHashChange();  
+	handleHashChange();
 });
 
 
@@ -706,10 +763,22 @@ function handleAverageData(data){
 
 
 function handlePosition(data){
+    if (!mapLoaded) return;
 	//logMessage(data.coords.latitude + ' - ' + data.coords.longitude);
 	var uPos = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
-	marker.setPosition(uPos);
-	
+    if (marker==null){
+        marker = new google.maps.Marker({
+            map:map,
+            animation: google.maps.Animation.DROP,
+            position: uPos,
+            icon: "./car.png"
+        });
+        map.setCenter(uPos);
+        map.setZoom(16);
+    }else{
+        marker.setPosition(uPos);
+    }
+
 	if(!map.getBounds().contains(uPos)){
 		map.setCenter(uPos);
 	}

@@ -3,10 +3,12 @@
 	<title>webinos | vehicle testbed</title>
 	<link rel="icon" href="webinos.ico" type="image/x-icon">
 	<link rel="stylesheet" type="text/css" href="cbc.css" media="screen"/>
-	<link rel="stylesheet" type="text/css" href="../../general/appswitcher.css" media="screen"/>
+	<!--<link rel="stylesheet" type="text/css" href="../../general/appswitcher.css" media="screen"/>-->
+	<link rel="stylesheet" type="text/css" href="./deviceselector.css" media="screen"/>
 
 	<script type="text/javascript" src="../../general/jquery-1.7.2.min.js"></script>
-	<script type="text/javascript" src="../../general/appswitcher.js"></script>
+	<!--<script type="text/javascript" src="../../general/appswitcher.js"></script>-->
+	<script type="text/javascript" src="./deviceselector.js"></script>
 	<script type="text/javascript" src="jcanvas.min.js"></script>
 	
 	<script type="text/javascript" src="/webinos.js"></script>
@@ -70,9 +72,9 @@
 			</li>
 			<li>
 					<div class='propertybox'>
-						<div class='description'>RPM</div>
+						<div class='description'>Engine RPM</div>
 						<div class='value' id='v-consumption'>0.00</div>
-						<div class='unit'>rev/min</div>
+						<div class='unit'>rpm</div>
 					</div>
 			</li>
 			<li>
@@ -84,16 +86,16 @@
 			</li>
 			<li>
 					<div class='propertybox'>
-						<div class='description'>FRP</div>
+						<div class='description'>Fuel pressure</div>
 						<div class='value' id='v-range'>547</div>
-						<div class='unit'>%</div>
+						<div class='unit'>kPa</div>
 					</div>
 			</li>
 			<li>
 					<div class='propertybox'>
-						<div class='description'>Temp</div>
+						<div class='description'>Engine Temp</div>
 						<div class='value' id='v-mileage'>80</div>
-						<div class='unit'>Celsius</div>
+						<div class='unit'>&deg;C</div>
 					</div>
 			</li>
 		</ul>
