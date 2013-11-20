@@ -791,11 +791,11 @@ function handlePosition(data){
 	if(!map.getBounds().contains(uPos)){
 		map.setCenter(uPos);
 	}
-	$('#v-lat').html(Math.floor(data.coords.latitude * 10000)/10000);
-	$('#v-lng').html(Math.floor(data.coords.longitude * 10000)/10000);
-	$('#v-alt').html(data.coords.altitude);
-	$('#v-heading').html(data.coords.heading);
-	$('#v-heading2').html(data.coords.heading);
+	$('#v-lat').html((Math.floor(data.coords.latitude * 10000)/10000).toFixed(4));
+	$('#v-lng').html((Math.floor(data.coords.longitude * 10000)/10000).toFixed(4));
+	$('#v-alt').html(Number(data.coords.altitude).toFixed(2));
+	$('#v-heading').html(Number(data.coords.heading).toFixed(2));
+	$('#v-heading2').html(Number(data.coords.heading).toFixed(1));
 	//if(data.sensorType === "http://webinos.org/api/sensors/vss") $('#v-speed').html(data.sensorValues[0]);
         //if(data.sensorType === "http://webinos.org/api/sensors/vss") $('#v-speed2').html(data.sensorValues[0]);
 //	$('#v-speed').html(data.coords.speed);
