@@ -778,9 +778,10 @@ function handlePosition(data){
     if (marker==null){
         marker = new google.maps.Marker({
             map:map,
-            animation: google.maps.Animation.DROP,
+//            animation: google.maps.Animation.DROP,
             position: uPos,
-            icon: "./car.png"
+            icon: "./car.png",
+            optimized: false
         });
         map.setCenter(uPos);
         map.setZoom(16);
