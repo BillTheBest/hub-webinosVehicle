@@ -203,8 +203,8 @@ function findGeolocation(){
 	geolocation = null;
 	
 	webinos.discovery.findServices( 
-	//new ServiceType('http://webinos.org/api/w3c/geolocation'),
- 	new ServiceType('http://www.w3.org/ns/api-perms/geolocation'),
+	new ServiceType('http://webinos.org/api/w3c/geolocation'),
+// 	new ServiceType('http://www.w3.org/ns/api-perms/geolocation'),
  	{onFound: function (service) {
         carDevice.deadgeo = false;
 		updateStatus('geolocation service found');

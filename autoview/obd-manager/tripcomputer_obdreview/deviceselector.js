@@ -69,7 +69,7 @@ function findGeo(){
     webinos.dashboard.open({
         module:'explorer',
         data:{
-            service:['http://www.w3.org/ns/api-perms/geolocation'],
+            service:['http://webinos.org/api/w3c/geolocation'],
             select:"devices"
         }
     }, function(){waitingFromDashboard = "geo";})
