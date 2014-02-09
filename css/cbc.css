@@ -22,20 +22,20 @@ html, body{
 	float: left;
 		/* fallback */
   background-color: #1f1f1f;
-  background-image: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png);
+  background-image: url('../images/rauschen.png');
   
   /* Safari 4-5, Chrome 1-9 */
   /* Can't specify a percentage size? Laaaaaame. */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-gradient(radial, center center, 0, center center, 460, from(#585E59), to(#1f1f1f));
+  background: url('../images/rauschen.png'), -webkit-gradient(radial, center center, 0, center center, 460, from(#585E59), to(#1f1f1f));
   
   /* Safari 5.1+, Chrome 10+ */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -webkit-radial-gradient(circle, #585E59, #1f1f1f);
   
   /* Firefox 3.6+ */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -moz-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -moz-radial-gradient(circle, #585E59, #1f1f1f);
   
   /* IE 10 */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -ms-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -ms-radial-gradient(circle, #585E59, #1f1f1f);
 
 	box-shadow: #000000 0px 0px 10px;
 	z-index: 150;
@@ -53,20 +53,20 @@ html, body{
 	
 	/* fallback */
   background-color: #1f1f1f;
-  background-image: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png);
+  background-image: url('../images/rauschen.png');
   
   /* Safari 4-5, Chrome 1-9 */
   /* Can't specify a percentage size? Laaaaaame. */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-gradient(radial, center center, 0, center center, 460, from(#585E59), to(#1f1f1f));
+  background: url('../images/rauschen.png'), -webkit-gradient(radial, center center, 0, center center, 460, from(#585E59), to(#1f1f1f));
   
   /* Safari 5.1+, Chrome 10+ */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -webkit-radial-gradient(circle, #585E59, #1f1f1f);
   
   /* Firefox 3.6+ */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -moz-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -moz-radial-gradient(circle, #585E59, #1f1f1f);
   
   /* IE 10 */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -ms-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -ms-radial-gradient(circle, #585E59, #1f1f1f);
 	
 
 }
@@ -215,20 +215,20 @@ transition: all .5s ease-in;
 	padding: 0px;
 	box-shadow: inset 0 0 15px #313131;
 	background-color: #fff;
-  background-image: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png);
+  background-image: url('../images/rauschen.png');
   
   /* Safari 4-5, Chrome 1-9 */
   /* Can't specify a percentage size? Laaaaaame. */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-gradient(radial, center center, 0, center center, 460, from(#ddd), to(#fff));
+  background: url('../images/rauschen.png'), -webkit-gradient(radial, center center, 0, center center, 460, from(#ddd), to(#fff));
   
   /* Safari 5.1+, Chrome 10+ */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-radial-gradient(circle, #ddd, #fff);
+  background: url('../images/rauschen.png'), -webkit-radial-gradient(circle, #ddd, #fff);
   
   /* Firefox 3.6+ */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -moz-radial-gradient(circle, #ddd, #fff);
+  background: url('../images/rauschen.png'), -moz-radial-gradient(circle, #ddd, #fff);
   
   /* IE 10 */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -ms-radial-gradient(circle, #ddd, #fff);
+  background: url('../images/rauschen.png'), -ms-radial-gradient(circle, #ddd, #fff);
 
 }
 
@@ -377,20 +377,20 @@ transition: all .5s ease-out;
 	box-shadow: 0 0 20px #000000;
 	/* fallback */
   background-color: #1f1f1f;
-  background-image: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png);
+  background-image: url('../images/rauschen.png');
   
   /* Safari 4-5, Chrome 1-9 */
   /* Can't specify a percentage size? Laaaaaame. */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-gradient(radial, center center, 0, center center, 460, from(#585E59), to(#1f1f1f));
+  background: url('../images/rauschen.png'), -webkit-gradient(radial, center center, 0, center center, 460, from(#585E59), to(#1f1f1f));
   
   /* Safari 5.1+, Chrome 10+ */
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -webkit-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -webkit-radial-gradient(circle, #585E59, #1f1f1f);
   
   /* Firefox 3.6+ */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -moz-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -moz-radial-gradient(circle, #585E59, #1f1f1f);
   
   /* IE 10 */ 
-  background: url(../autoview/obd-manager/tripcomputer_obdreview/rauschen.png), -ms-radial-gradient(circle, #585E59, #1f1f1f);
+  background: url('../images/rauschen.png'), -ms-radial-gradient(circle, #585E59, #1f1f1f);
 
 }
 
