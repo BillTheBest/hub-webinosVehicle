@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="http://webinos.org/hubVehicle" version="1.0">
+  <name>Vehicle Hub</name>
+  <description>Displays information from OBD-II and Geolocation</description>
+  <content src="index.html" />
+  <icon src="images/icon.png" />
+  <author>Christos Botsikas (NTUA)</author>
+</widget>
+
