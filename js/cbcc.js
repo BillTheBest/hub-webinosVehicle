@@ -780,7 +780,7 @@ function handlePosition(data){
             map:map,
 //            animation: google.maps.Animation.DROP,
             position: uPos,
-            icon: "./car.png",
+            icon: "./images/markerCar.png",
             optimized: false
         });
         map.setCenter(uPos);

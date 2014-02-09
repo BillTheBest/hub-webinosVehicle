@@ -21,8 +21,8 @@ $(document).ready(function() {
 	$('body').append('<div id="appswitcher-outer" class="SwitcherDisabled"></div>');
 	$('body').append('<div id="appswitcher-inner" class="SwitcherDisabled"></div>');
 	$('#appswitcher-inner').append('<a  tabindex="1" id="appswitcher-start"/></a>');
-	createAppEntry(1, carDevice.geo, '../../obd-manager/general/images/icon.png', 'javascript:findGeo();');
-	createAppEntry(2, carDevice.obd, '../../obd-manager/tripcomputer_obdreview/icon.png', 'javascript:findObd();');
+	createAppEntry(1, carDevice.geo, './images/selectGeo.png', 'javascript:findGeo();');
+	createAppEntry(2, carDevice.obd, './images/selectObd.png', 'javascript:findObd();');
 	$('#appswitcher-inner').append('<a  tabindex="1" id="appswitcher-end"/></a>');
 	$('#appswitcher-start').bind('focus', function(){
 		$('#app1').focus();
