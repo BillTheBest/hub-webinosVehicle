@@ -1,246 +1,252 @@
 <html>
 <head>
-	<title>webinos | vehicle testbed</title>
-	<link rel="icon" href="webinos.ico" type="image/x-icon">
-	<link rel="stylesheet" type="text/css" href="./css/cbc.css" media="screen"/>
-	<!--<link rel="stylesheet" type="text/css" href="../../general/appswitcher.css" media="screen"/>-->
-	<link rel="stylesheet" type="text/css" href="./css/deviceselector.css" media="screen"/>
+    <title>webinos | vehicle testbed</title>
+    <link rel="icon" href="webinos.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="./css/cbc.css" media="screen"/>
+    <!--<link rel="stylesheet" type="text/css" href="../../general/appswitcher.css" media="screen"/>-->
+    <link rel="stylesheet" type="text/css" href="./css/deviceselector.css" media="screen"/>
 
-	<script type="text/javascript" src="./js/jquery-1.7.2.min.js"></script>
-	<!--<script type="text/javascript" src="../../general/appswitcher.js"></script>-->
-	<script type="text/javascript" src="./js/deviceselector.js"></script>
-	<script type="text/javascript" src="./js/jcanvas.min.js"></script>
-	
-	<script type="text/javascript" src="/webinos.js"></script>
+    <script type="text/javascript" src="./js/jquery-1.7.2.min.js"></script>
+    <!--<script type="text/javascript" src="../../general/appswitcher.js"></script>-->
+    <script type="text/javascript" src="./js/deviceselector.js"></script>
+    <script type="text/javascript" src="./js/jcanvas.min.js"></script>
 
-<script src="./js/jquery-1.8.1-min.js"></script>
-<script src="./js/jquery-ui-1.8.23-min.js"></script>
-<script src="./js/RGraph/libraries/RGraph.common.core.js"></script>
-<script src="./js/RGraph/libraries/RGraph.common.dynamic.js"></script>
-<script src="./js/RGraph/libraries/RGraph.common.tooltips.js" ></script>
-<script src="./js/RGraph/libraries/RGraph.common.effects.js"></script>
+    <script type="text/javascript" src="/webinos.js"></script>
 
-<!--script src="js/RGraph/libraries/RGraph.line.js" ></script-->
-<script src="./js/RGraph/libraries/RGraph.gauge.js"></script>
-<script src="./js/RGraph/libraries/RGraph.cornergauge.js"></script>
-<script src="./js/RGraph/libraries/RGraph.thermometer.js"></script>
-<script src="./js/RGraph/libraries/RGraph.fuel.js"></script>
-<script src="./js/RGraph/libraries/RGraph.odo.js"></script>
+    <script src="./js/jquery-1.8.1-min.js"></script>
+    <script src="./js/jquery-ui-1.8.23-min.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.common.core.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.common.dynamic.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.common.tooltips.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.common.effects.js"></script>
 
-	
-	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-	<script type="text/javascript" src="./js/cbcc.js"></script>
-	
+    <!--script src="js/RGraph/libraries/RGraph.line.js" ></script-->
+    <script src="./js/RGraph/libraries/RGraph.gauge.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.cornergauge.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.thermometer.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.fuel.js"></script>
+    <script src="./js/RGraph/libraries/RGraph.odo.js"></script>
+
+
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="./js/cbcc.js"></script>
+
 </head>
 
 
 <body>
-	
-	<div id='map'>
-	
-	</div>
-	<div id='bc-nav'>
-		<a  tabindex='1' id='n-start'/></a>
-		<ul>
-			<li><a href='#drive' tabindex='2' id='nav1' class='active'><div class='toplevellink'>Dashboard</div></a></li>
-			<li><a href='#travel' tabindex='3' id='nav2'><div class='toplevellink'>Diagnostics</div></a></li>
-			<li><a href='#check' tabindex='4' id='nav3'><div class='toplevellink'>Location</div></a></li>
-			<!--<li><a href='#geek' tabindex='5' id='nav4'><div class='toplevellink'>MyView</div></a></li>-->
-		</ul>
-		<a  tabindex='6' id='n-end'/></a>
-	</div>
-	<div id='bc-full'>
-		
-		<ul id='drive'>
-					<div class='propertybox'>
-                                        <div class='description'></div>
-                                        <div id="gauges">
-                                            <canvas id="gauge_placeholder" width='250' height='250' align=LEFT></canvas>
-                                            <canvas id="gauge_placeholder1" width='250' height='250' align=RIGHT></canvas>
-                                            <canvas id="gauge_placeholder2" width='250' height='250' align=LEFT></canvas>
-                                            <canvas id="gauge_placeholder3" width='250' height='250' align=RIGHT></canvas>
-                                        </div>
-				    </div>
-		</ul>
-		<ul id='travel' class='disabled'>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Speed</div>
-						<div class='value' id='v-avg-speed'>-</div>
-						<div class='unit'>km/h</div>
-					</div>
-			</li>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Engine RPM</div>
-						<div class='value' id='v-consumption'>-</div>
-						<div class='unit'>rpm</div>
-					</div>
-			</li>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Engine Load</div>
-						<div class='value' id='v-distance'>-</div>
-						<div class='unit'>%</div> 
-					</div>
-			</li>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Fuel pressure</div>
-						<div class='value' id='v-range'>-</div>
-						<div class='unit'>kPa</div>
-					</div>
-			</li>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Engine Temp</div>
-						<div class='value' id='v-mileage'>-</div>
-						<div class='unit'>&deg;C</div>
-					</div>
-			</li>
-		</ul>
-		<ul id='check' class='disabled'>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Latitude</div>
-						<div class='value' id='v-lat'>-</div>
-						<div class='unit'>&deg;</div> 
-					</div>
-			</li>
-			<li> 
-					<div class='propertybox'>
-						<div class='description'>Longitude</div> 
-						<div class='value' id='v-lng'>-</div>
-						<div class='unit'>&deg;</div> 
-					</div>
-			</li> 
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Altitude</div>
-						<div class='value' id='v-alt'>-</div>
-						<div class='unit'>m</div>
-					</div>
-			</li>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Heading</div>
-						<div class='value' id='v-heading2'>-</div>
-						<div class='unit'>&deg;</div>
-					</div>
-			</li>
-		<!--     <li>
-					<div class='propertybox'>
-						<div class='description'>Speed</div>
-						<div class='value' id='v-speed2'>0.0</div>
-						<div class='unit'>kmph</div>
-					</div> 
-			</li>  -->
-                        <li>
-					<div class='propertybox'>
-						<div class='description'>Latitudinal Accelartion</div>
-						<div class='value' id='v-lat-acc'>-</div>
-						<div class='unit'>m/s<sup>2</sup></div>
-					</div>
-			</li>
-			<li>
-					<div class='propertybox'>
-						<div class='description'>Longitudinal Acceleration</div>
-						<div class='value' id='v-lng-acc'>-</div>
-						<div class='unit'>m/s<sup>2</sup></div>
-					</div> 
-			</li>
 
-		</ul>
+<div id='map'>
 
-		<a  tabindex='29' id='geek-start'/></a>
-		<ul id='geek' class='disabled'>
-			<li>
-				<a href='#selecter' tabindex='30' id='customfield1'>
-					<div class='propertybox'>
-						<div class='description'>Gear</div>
-						<div class='value'></div>
-						<div class='unit'></div>
-					</div>
-				</a>
-			</li>
-			<li>
-				<a href='#selecter' tabindex='31' id='customfield2'>
-					<div class='propertybox'>
-						<div class='description'>Speed</div>
-						<div class='value'></div>
-						<div class='unit'>kmph</div>
-					</div>
-				</a>
-			</li>
-			<li>
-				<a href='#selecter' tabindex='32' id='customfield3'>
-					<div class='propertybox'>
-						<div class='description'>Latitude</div>
-						<div class='value'></div>
-						<div class='unit'>&deg;</div>
-					</div>
-				</a>
-			</li>
-			<li>
-				<a href='#selecter' tabindex='33' id='customfield4'>
-					<div class='propertybox'>
-						<div class='description'>Longitude</div>
-						<div class='value'></div>
-						<div class='unit'>&deg;</div>
-					</div>
-				</a>
-			</li>
-			<li>
-				<a href='#selecter' tabindex='34' id='customfield5'>
-					<div class='propertybox'>
-						<div class='description'>Altitude</div>
-						<div class='value'></div>
-						<div class='unit'>m</div>
-					</div>
-				</a>
-			</li>
-		</ul>
-		<a id='geek-end' tabindex='35'/></a>
-	</div>
+</div>
+<div id='bc-nav'>
+    <a tabindex='1' id='n-start'/></a>
+    <ul>
+        <li><a href='#drive' tabindex='2' id='nav1' class='active'>
+            <div class='toplevellink'>Dashboard</div>
+        </a></li>
+        <li><a href='#travel' tabindex='3' id='nav2'>
+            <div class='toplevellink'>Diagnostics</div>
+        </a></li>
+        <li><a href='#check' tabindex='4' id='nav3'>
+            <div class='toplevellink'>Location</div>
+        </a></li>
+        <!--<li><a href='#geek' tabindex='5' id='nav4'><div class='toplevellink'>MyView</div></a></li>-->
+    </ul>
+    <a tabindex='6' id='n-end'/></a>
+</div>
+<div id='bc-full'>
 
-	
-	<div id='loading'>
-		<div id='loading-bg'></div>
-		<div id='loading-message'>
-			<div id='loadingimage'><img src='./images/cbcloader.gif'></div>
-			<div id='loadingstatus'>Loading...</div>
-		</div>
-	</div>
-	<div id='selection' class='disabled'>
-		<div id='selection-overlay'></div>
-		<div id='selection-content'>
-			<h1>Please select a property</h1>
-			<a tabindex='09' id='selection-start'/></a>
-			<ul>
-				<li><a href='#geek' id='selecter-speed' tabindex='10'>Speed</a></li>
-				<li><a href='#geek' id='selecter-gear' tabindex='11'>Gear</a></li>
-				<li><a href='#geek' id='selecter-heading' tabindex='12'>Heading</a></li>
-				<li><a href='#geek' id='selecter-lateral' tabindex='13'>Lateral<br/> Acceleration</a></li>
-				<li><a href='#geek' id='selecter-longitudinal' tabindex='14'>Longitudinal<br/> Acceleration</a></li>
-				<li><a href='#geek' id='selecter-lat' tabindex='15'>Latitude</a></li>
-				<li><a href='#geek' id='selecter-lng' tabindex='16'>Longitude</a></li>
-				<li><a href='#geek' id='selecter-alt'tabindex='17'>Altitude</a></li>
-				<li><a href='#geek' id='selecter-consumption' tabindex='18'>RPM</a></li>
-				<li><a href='#geek' id='selecter-avg-speed' tabindex='19'>Speed</a></li>
-				<li><a href='#geek' id='selecter-mileage' tabindex='20'>Temp</a></li>
-				<li><a href='#geek' id='selecter-distance' tabindex='21'>Load_PCT</a></li>
-				<li><a href='#geek' id='selecter-range' tabindex='22'>FRP</a></li>
-			</ul>
-			<a tabindex='24' id='selection-end'/></a>
-		</div>
-	</div>
-	<div id='pdc'>
-		<div id="pdcApp" >
-			<canvas id="pdcFront" width="100" height="150"></canvas>
-			<canvas id="pdcRear" width="100" height="150"></canvas>
-		</div>
-	</div>
-	
-	
+    <ul id='drive'>
+        <div class='propertybox'>
+            <div class='description'></div>
+            <div id="gauges">
+                <canvas id="gauge_placeholder" width='250' height='250' align=LEFT></canvas>
+                <canvas id="gauge_placeholder1" width='250' height='250' align=RIGHT></canvas>
+                <canvas id="gauge_placeholder2" width='250' height='250' align=LEFT></canvas>
+                <canvas id="gauge_placeholder3" width='250' height='250' align=RIGHT></canvas>
+            </div>
+        </div>
+    </ul>
+    <ul id='travel' class='disabled'>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Speed</div>
+                <div class='value' id='v-avg-speed'>-</div>
+                <div class='unit'>km/h</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Engine RPM</div>
+                <div class='value' id='v-consumption'>-</div>
+                <div class='unit'>rpm</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Engine Load</div>
+                <div class='value' id='v-distance'>-</div>
+                <div class='unit'>%</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Fuel pressure</div>
+                <div class='value' id='v-range'>-</div>
+                <div class='unit'>kPa</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Engine Temp</div>
+                <div class='value' id='v-mileage'>-</div>
+                <div class='unit'>&deg;C</div>
+            </div>
+        </li>
+    </ul>
+    <ul id='check' class='disabled'>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Latitude</div>
+                <div class='value' id='v-lat'>-</div>
+                <div class='unit'>&deg;</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Longitude</div>
+                <div class='value' id='v-lng'>-</div>
+                <div class='unit'>&deg;</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Altitude</div>
+                <div class='value' id='v-alt'>-</div>
+                <div class='unit'>m</div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Heading</div>
+                <div class='value' id='v-heading2'>-</div>
+                <div class='unit'>&deg;</div>
+            </div>
+        </li>
+        <!--     <li>
+                    <div class='propertybox'>
+                        <div class='description'>Speed</div>
+                        <div class='value' id='v-speed2'>0.0</div>
+                        <div class='unit'>kmph</div>
+                    </div>
+            </li>  -->
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Latitudinal Accelartion</div>
+                <div class='value' id='v-lat-acc'>-</div>
+                <div class='unit'>m/s<sup>2</sup></div>
+            </div>
+        </li>
+        <li>
+            <div class='propertybox'>
+                <div class='description'>Longitudinal Acceleration</div>
+                <div class='value' id='v-lng-acc'>-</div>
+                <div class='unit'>m/s<sup>2</sup></div>
+            </div>
+        </li>
+
+    </ul>
+
+    <a tabindex='29' id='geek-start'/></a>
+    <ul id='geek' class='disabled'>
+        <li>
+            <a href='#selecter' tabindex='30' id='customfield1'>
+                <div class='propertybox'>
+                    <div class='description'>Gear</div>
+                    <div class='value'></div>
+                    <div class='unit'></div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href='#selecter' tabindex='31' id='customfield2'>
+                <div class='propertybox'>
+                    <div class='description'>Speed</div>
+                    <div class='value'></div>
+                    <div class='unit'>kmph</div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href='#selecter' tabindex='32' id='customfield3'>
+                <div class='propertybox'>
+                    <div class='description'>Latitude</div>
+                    <div class='value'></div>
+                    <div class='unit'>&deg;</div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href='#selecter' tabindex='33' id='customfield4'>
+                <div class='propertybox'>
+                    <div class='description'>Longitude</div>
+                    <div class='value'></div>
+                    <div class='unit'>&deg;</div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href='#selecter' tabindex='34' id='customfield5'>
+                <div class='propertybox'>
+                    <div class='description'>Altitude</div>
+                    <div class='value'></div>
+                    <div class='unit'>m</div>
+                </div>
+            </a>
+        </li>
+    </ul>
+    <a id='geek-end' tabindex='35'/></a>
+</div>
+
+
+<div id='loading'>
+    <div id='loading-bg'></div>
+    <div id='loading-message'>
+        <div id='loadingimage'><img src='./images/cbcloader.gif'></div>
+        <div id='loadingstatus'>Loading...</div>
+    </div>
+</div>
+<div id='selection' class='disabled'>
+    <div id='selection-overlay'></div>
+    <div id='selection-content'>
+        <h1>Please select a property</h1>
+        <a tabindex='09' id='selection-start'/></a>
+        <ul>
+            <li><a href='#geek' id='selecter-speed' tabindex='10'>Speed</a></li>
+            <li><a href='#geek' id='selecter-gear' tabindex='11'>Gear</a></li>
+            <li><a href='#geek' id='selecter-heading' tabindex='12'>Heading</a></li>
+            <li><a href='#geek' id='selecter-lateral' tabindex='13'>Lateral<br/> Acceleration</a></li>
+            <li><a href='#geek' id='selecter-longitudinal' tabindex='14'>Longitudinal<br/> Acceleration</a></li>
+            <li><a href='#geek' id='selecter-lat' tabindex='15'>Latitude</a></li>
+            <li><a href='#geek' id='selecter-lng' tabindex='16'>Longitude</a></li>
+            <li><a href='#geek' id='selecter-alt' tabindex='17'>Altitude</a></li>
+            <li><a href='#geek' id='selecter-consumption' tabindex='18'>RPM</a></li>
+            <li><a href='#geek' id='selecter-avg-speed' tabindex='19'>Speed</a></li>
+            <li><a href='#geek' id='selecter-mileage' tabindex='20'>Temp</a></li>
+            <li><a href='#geek' id='selecter-distance' tabindex='21'>Load_PCT</a></li>
+            <li><a href='#geek' id='selecter-range' tabindex='22'>FRP</a></li>
+        </ul>
+        <a tabindex='24' id='selection-end'/></a>
+    </div>
+</div>
+<div id='pdc'>
+    <div id="pdcApp">
+        <canvas id="pdcFront" width="100" height="150"></canvas>
+        <canvas id="pdcRear" width="100" height="150"></canvas>
+    </div>
+</div>
+
+
 </body>
 </html>
