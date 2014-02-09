@@ -1,4 +1,4 @@
-var centerPoint = new google.maps.LatLng(54.525961, 15.255119);//Europe
+﻿var centerPoint = new google.maps.LatLng(54.525961, 15.255119);//Europe
 var centerBounds = new google.maps.LatLngBounds(
     new google.maps.LatLng(35.036881, -11.024178), //SW
     new google.maps.LatLng(61.777099, 29.405509)   //NE
