@@ -1,14 +1,18 @@
-var centerPoint = new google.maps.LatLng(41.38765942141657, 2.1694680888855373);
-var markerPoint = new google.maps.LatLng(41.38765942141657, 2.1694680888855373);
-var marker;
+var centerPoint = new google.maps.LatLng(54.525961, 15.255119);//Europe
+var centerBounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(35.036881, -11.024178), //SW
+    new google.maps.LatLng(61.777099, 29.405509)   //NE
+);
+var marker = null;
+var mapLoaded = false;
 var position;
 var map;
 var geocoder;
 var mapBounds;
 var allServices = {};
-var sensors = {};
+var sensors = null;
 var sensorActive = {};
-var geolocation;
+var geolocation = null;
 var deviceorientation;
 var ps;
 
@@ -55,7 +59,7 @@ dataModel = [{id: 'selecter-gear', desc:'Gear' , unit: '', defaultV:'10', custom
 
 function initializeMap() {
     var mapOptions = {
-      zoom: 15,
+      zoom: 4,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: centerPoint,
       scaleControl: false,
@@ -64,22 +68,28 @@ function initializeMap() {
       mapTypeControl: false
       
     };
-
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    geocoder = new google.maps.Geocoder();
-    marker = new google.maps.Marker({
-      map:map,
-      animation: google.maps.Animation.DROP,
-      position: markerPoint
+//    geocoder = new google.maps.Geocoder();
+    map.fitBounds(centerBounds);
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+        mapLoaded = true;
     });
     
-   mapBounds = map.getBounds();
+   var mapBounds = map.getBounds();
 }
-
+var _timer = null;
 function updateStatus(text){
+    if (_timer) clearTimeout(_timer);
+	$('#loading').removeClass('disabled');
 	$('#loadingstatus').html(text);
+    console.log(text);
+	_timer = setTimeout(hideStatus,2000);
 }
 
+function hideStatus(){
+$('#loading').addClass('disabled');
+_timer = null;
+}
 
 function getLinkObj(hash){
 	switch(hash){
@@ -104,7 +114,7 @@ function logMessage(msg) {
 	if (msg) {
 		$('#message').append('<li>' + msg + '</li>');
 	}
-}	
+}
 
 function handleHashChange(){
 	if((window.location.hash == '#drive' || window.location.hash == '#travel' || window.location.hash == '#check' || window.location.hash == '#geek') && active != window.location.hash){
@@ -117,6 +127,7 @@ function handleHashChange(){
 		switch(active){
 			case "#drive":
 				$('#nav1').focus();
+                resizeGauges();
 				break;
 			case "#travel":
 				$('#nav2').focus();
@@ -155,6 +166,7 @@ function findsensors(){
 	webinos.discovery.findServices(
  	new ServiceType('http://webinos.org/api/sensors/*'),
  	{onFound: function (service) {
+        carDevice.deadcar = false;
 		updateStatus('sensors service found');
 		//sensors[service.api] = service;
 		//bindToSensors(service.api);
@@ -182,7 +194,7 @@ function findsensors(){
 				sensors[service.api] = service;
 				bindToSensors(service.api);  
 			}
-	}});
+	}},{},{zoneId:[carDevice.obd.id]});
 }
 
 function findGeolocation(){
@@ -191,13 +203,14 @@ function findGeolocation(){
 	geolocation = null;
 	
 	webinos.discovery.findServices( 
-	//new ServiceType('http://webinos.org/api/w3c/geolocation'),
- 	new ServiceType('http://www.w3.org/ns/api-perms/geolocation'),
+	new ServiceType('http://webinos.org/api/w3c/geolocation'),
+// 	new ServiceType('http://www.w3.org/ns/api-perms/geolocation'),
  	{onFound: function (service) {
+        carDevice.deadgeo = false;
 		updateStatus('geolocation service found');
 		geolocation = service;
 		bindToGeolocation();
-	}});
+	}},{},{zoneId:[carDevice.geo.id]});
 }
 
 function findDeviceOrientation(){
@@ -227,7 +240,7 @@ function bindToGeolocation(){
 	geolocation.bindService({onBind:function(service) {
 		updateStatus('Bound to Geolocation service');
 		registerGeoListener();
-		findDeviceOrientation();
+        //findDeviceOrientation();
 	}});
 }
 function bindToDeviceOrientation(){
@@ -287,29 +300,30 @@ function onSensorEvent3(event){
 
 
 function createGauge(){
-            gauge = new RGraph.Gauge("gauge_placeholder", 0, 17000, 0);
+            gauge = new RGraph.Gauge("gauge_placeholder", 0, 8000, 0);
             gauge.Set('chart.title.top','RPM');
             gauge.Set('chart.title.top.bold','true');
-            gauge.Set('chart.title.bottom','rev/min');
+            gauge.Set('chart.title.bottom','rpm');
             gauge.Set('chart.title.bottom.size','8');
             RGraph.Effects.Gauge.Grow(gauge);
 
-            gauge1 = new RGraph.Gauge("gauge_placeholder1", 0, 400, 0);
+            gauge1 = new RGraph.Gauge("gauge_placeholder1", 0, 180, 0);
             gauge1.Set('chart.title.top','Speed');
             gauge1.Set('chart.title.top.bold','true');
             gauge1.Set('chart.title.bottom','km/h');
             gauge1.Set('chart.title.bottom.size','8');
             RGraph.Effects.Gauge.Grow(gauge1);
 
-            gauge2 = new RGraph.Gauge("gauge_placeholder2", -40, 215, 0);
+            gauge2 = new RGraph.Gauge("gauge_placeholder2", 70, 120, 0);
             gauge2.Set('chart.title.top','Engine Temp');
             gauge2.Set('chart.title.top.bold','true');
-            gauge2.Set('chart.title.bottom','Celsius');
+            gauge2.Set('chart.title.bottom','°C');
             gauge2.Set('chart.title.bottom.size','8');
+//            gauge2.value = 80;
             RGraph.Effects.Gauge.Grow(gauge2);
 
             gauge3 = new RGraph.Gauge("gauge_placeholder3", 1, 100, 0);
-            gauge3.Set('chart.title.top','Throttle Pos');
+            gauge3.Set('chart.title.top','Engine Load');
             gauge3.Set('chart.title.top.bold','true');
             gauge3.Set('chart.title.bottom','%');
             gauge3.Set('chart.title.bottom.size','8');
@@ -331,14 +345,15 @@ function registersensorsListeners(api){
 
         updateStatus('sensors listeners registered.');
 	sensors[api].addEventListener('sensor', handleAverageData, false);
-	findGeolocation();
+	
+	//findGeolocation();
 }
 
 
 function registerGeoListener(){
 	var params = {};
-	geolocation.getCurrentPosition(handlePosition, errorCB, params);
-	ps = geolocation.watchPosition(handlePosition,errorCB, params);
+//	geolocation.getCurrentPosition(handlePosition, errorCB, params);
+	ps = geolocation.watchPosition(handlePosition, errorCB, params);
 }
 
 function registerDoListener(){
@@ -362,12 +377,198 @@ function fillPZAddrs(data) {
 	  pzhId = data.payload.message.pzhId;                                     
 	  connectedPzp = data.payload.message.connectedPzp; // all connected pzp
 	  connectedPzh = data.payload.message.connectedPzh; // all connected pzh
-		findsensors();
-		//findGeolocation();
+	  findsensors();
+	  findGeolocation();
+        //DiscoverSensors();
 	}
 }
+function promptDeviceSelection() {
+    displaySwitcher();
+}
+function findRequiredApis() {
+//    if (!carDevice.changed) return;
+    carDevice.changed = false;
+    if (carDevice.deadcar || sensors==null)
+        findsensors();
+    if (carDevice.deadgeo || geolocation==null)
+        findGeolocation();
+}
+function deviceListChanged() {
+    if (checkCarDevice()){
+        findRequiredApis();
+    }else{
+        promptDeviceSelection();
+    }
+}
 
+function checkCarDevice() {
+    updateOptions();
+    if (carDevice.geo == null || carDevice.obd == null){
+        return false;
+    }
+    var geoOk = false, obdOk = false;
+
+    for (var i = 0; i < webinos.session.getConnectedPzp().length; i++) {
+        var tmpDevice = webinos.session.getConnectedPzp()[i];
+        if (tmpDevice.isConnected || typeof tmpDevice.isConnected === "undefined"){
+            if (carDevice.geo && carDevice.geo.id == tmpDevice.id){
+                geoOk = true;
+                carDevice.geo = tmpDevice;
+            }
+            if (carDevice.obd && carDevice.obd.id == tmpDevice.id){
+                obdOk = true;
+                carDevice.obd = tmpDevice;
+            }
+        }
+    }
+    if (!carDevice.deadcar)
+        carDevice.deadcar = !obdOk;
+    if (!carDevice.deadgeo)
+        carDevice.deadgeo = !geoOk;
+
+    return (geoOk && obdOk);
+}
+var carDevice = {
+    geo: null,
+    obd: null,
+    changed: false
+};
+
+function DiscoverSensors(){
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/rpm"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            rpm_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/vss"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            vss_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/temp"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            temp_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+
+    webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/throttlepos"), {
+        onFound: function (service) {
+            service.bind({
+                onBind: function () {
+                    var configure_options = {
+                        rate:500,
+                        timeout:500,
+                        eventFireMode: "fixedinterval"
+                    };
+
+                    service.configureSensor(configure_options,
+                        function(){
+                            throttlepos_sensor = service;
+                        },
+                        function (){
+                            console.error('Error configuring Sensor ' + service.api);
+                        }
+                    );
+                }
+            });
+        }
+    });
+}
+function resizeGauges(){
+//    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    var newW = ($('#gauges').width()-10)/2;
+    var newH = ($('#gauges').height()-10)/2;
+    var newVal = newW;
+    if (newVal>newH){
+        newVal = newH;
+    }
+    $('#gauge_placeholder').width(newVal);
+    $('#gauge_placeholder').height(newVal);
+    $('#gauge_placeholder1').width(newVal);
+    $('#gauge_placeholder1').height(newVal);
+    $('#gauge_placeholder2').width(newVal);
+    $('#gauge_placeholder2').height(newVal);
+    $('#gauge_placeholder3').width(newVal);
+    $('#gauge_placeholder3').height(newVal);
+
+//    $('#bc-nav li').each(function(){
+//        var $this = $(this);
+//        var $text = $this.children(".toplevellink")[0];
+//        if ($this.width()<$text.width){
+//
+//        }
+//    })
+}
+var resizeTimer=null;
 $(document).ready(function() {
+    if (typeof localStorage != "undefined" && localStorage.getItem("vehicleHubCarDevice")){
+        var stored = null;
+        try {
+            stored = JSON.parse(localStorage.getItem("vehicleHubCarDevice"));
+        }catch(e){}
+        if (stored!=null)
+            carDevice = stored;
+        carDevice.changed = true;
+    }
+    jQuery(window).resize(function(){
+        if (resizeTimer!=null) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resizeGauges, 100);
+    });
+    resizeGauges();
 	$('#nav1').focus();
 	//HELPERS FOR OVERSCROLLING SELECTION LIST
 	$('#selection-start').bind('focus', function(){
@@ -468,122 +669,12 @@ $(document).ready(function() {
 			handleHashChange();
 	});
 
-	   $(document).on("click","#start_but", function(event){
-                rpm_sensor.addEventListener("sensor", onSensorEvent, false);
-                vss_sensor.addEventListener("sensor", onSensorEvent1, false);
-                temp_sensor.addEventListener("sensor", onSensorEvent2, false);
-                throttlepos_sensor.addEventListener("sensor", onSensorEvent3, false);
-            });
-
-            $(document).on("click","#stop_but", function(event){
-                rpm_sensor.removeEventListener("sensor", onSensorEvent, false);
-                vss_sensor.removeEventListener("sensor", onSensorEvent1, false);
-                temp_sensor.removeEventListener("sensor", onSensorEvent2, false);
-                throttlepos_sensor.removeEventListener("sensor", onSensorEvent3, false);
-            });
-
-            createGauge();    
-
-            webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/rpm"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    rpm_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-         webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/vss"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    vss_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-         webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/temp"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    temp_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-
-          webinos.discovery.findServices(new ServiceType("http://webinos.org/api/sensors/throttlepos"), {
-                onFound: function (service) { 
-                    service.bind({
-                        onBind: function () {
-                            var configure_options = {
-                                rate:500,
-                                timeout:500,
-                                eventFireMode: "fixedinterval"
-                            };
-
-                            service.configureSensor(configure_options, 
-                                function(){
-                                    throttlepos_sensor = service;
-                                },
-                                function (){
-                                    console.error('Error configuring Sensor ' + service.api);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
-
-
-
+    createGauge();
 	initializeMap();
-	webinos.session.addListener('registeredBrowser', fillPZAddrs);
-	webinos.session.addListener('update', updatePZAddrs);
+	webinos.session.addListener('registeredBrowser', deviceListChanged);
+	webinos.session.addListener('update', deviceListChanged);
 	startUp();
-	handleHashChange();  
+	handleHashChange();
 });
 
 
@@ -621,11 +712,23 @@ function handleGear(data){
 
 
 function handleAverageData(data){
-       // alert(JSON.stringify(data));
-	if(data.sensorType === "http://webinos.org/api/sensors/rpm") $('#v-consumption').html(data.sensorValues[0]);
-	if(data.sensorType === "http://webinos.org/api/sensors/vss") $('#v-avg-speed').html(data.sensorValues[0]);
-        if(data.sensorType === "http://webinos.org/api/sensors/temp") $('#v-mileage').html(data.sensorValues[0]);
-	if(data.sensorType === "http://webinos.org/api/sensors/load_pct") $('#v-distance').html(data.sensorValues[0]);
+//    console.log("Data arrived from "+data.sensorType);
+	if(data.sensorType === "http://webinos.org/api/sensors/rpm") {
+		$('#v-consumption').html(data.sensorValues[0].toFixed(2));
+		onSensorEvent(data);
+	};
+	if(data.sensorType === "http://webinos.org/api/sensors/vss"){
+		$('#v-avg-speed').html(data.sensorValues[0]);
+		onSensorEvent1(data);
+	}
+        if(data.sensorType === "http://webinos.org/api/sensors/temp") {
+		$('#v-mileage').html(data.sensorValues[0]);
+		onSensorEvent2(data);
+	}
+	if(data.sensorType === "http://webinos.org/api/sensors/load_pct") {
+	$('#v-distance').html(data.sensorValues[0].toFixed(2));
+	onSensorEvent3(data);
+	}
         if(data.sensorType === "http://webinos.org/api/sensors/frp") $('#v-range').html(data.sensorValues[0]);
 
      // if(data.sensorType === "http://webinos.org/api/sensors/rpm") $('#v-consumption').html(data.rpm);
@@ -668,18 +771,32 @@ function handleAverageData(data){
 
 
 function handlePosition(data){
+//    console.log("Data arrived from Geolocation");
+    if (!mapLoaded) return;
 	//logMessage(data.coords.latitude + ' - ' + data.coords.longitude);
 	var uPos = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
-	marker.setPosition(uPos);
-	
+    if (marker==null){
+        marker = new google.maps.Marker({
+            map:map,
+//            animation: google.maps.Animation.DROP,
+            position: uPos,
+            icon: "./car.png",
+            optimized: false
+        });
+        map.setCenter(uPos);
+        map.setZoom(16);
+    }else{
+        marker.setPosition(uPos);
+    }
+
 	if(!map.getBounds().contains(uPos)){
 		map.setCenter(uPos);
 	}
-	$('#v-lat').html(Math.floor(data.coords.latitude * 10000)/10000);
-	$('#v-lng').html(Math.floor(data.coords.longitude * 10000)/10000);
-	$('#v-alt').html(data.coords.altitude);
-	$('#v-heading').html(data.coords.heading);
-	$('#v-heading2').html(data.coords.heading);
+	$('#v-lat').html((Math.floor(data.coords.latitude * 10000)/10000).toFixed(4));
+	$('#v-lng').html((Math.floor(data.coords.longitude * 10000)/10000).toFixed(4));
+	$('#v-alt').html(Number(data.coords.altitude).toFixed(2));
+	$('#v-heading').html(Number(data.coords.heading).toFixed(2));
+	$('#v-heading2').html(Number(data.coords.heading).toFixed(1));
 	//if(data.sensorType === "http://webinos.org/api/sensors/vss") $('#v-speed').html(data.sensorValues[0]);
         //if(data.sensorType === "http://webinos.org/api/sensors/vss") $('#v-speed2').html(data.sensorValues[0]);
 //	$('#v-speed').html(data.coords.speed);
