@@ -141,3 +141,55 @@ padding-top: 3px;
 .SwitcherDisabled{
 	display: none;
 }
+
+#deviceselectorwrapper {
+    display: block;
+    position: absolute;
+    z-index: 1000;
+    width: 60%;
+    height: 10%;
+}
+#deviceselectorbtn {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 15%;
+}
+#deviceselectorbtn a div{
+    width: 50px;
+    height: 50px;
+    background: url('../images/deviceSelect.png');
+}
+
+#deviceselectorbtn a:hover,
+#deviceselectorbtn a:focus{
+    text-decoration:none;
+    outline: 0;
+}
+
+#deviceselectorbtn.enabled a div{
+    background: url('../images/deviceSelect_hover.png');
+}
+
+#deviceselectorbtn a:hover div{
+    -webkit-transform: rotate(10deg);
+    -moz-transform: rotate(10deg);
+    -ms-transform: rotate(10deg);
+    -o-transform: rotate(10deg);
+    transform: rotate(10deg);
+}
+
+#deviceselectorbtnInfo {
+    display: none;
+    position: absolute;
+    top: 30%;
+    width: 150px;
+    right: 30px;
+    font-weight: bold;
+    color: #deff00;
+    font-size: .7em;/*18px;*/
+    text-shadow: #313131 1px 1px 2px;
+}
+#deviceselectorbtn.enabled #deviceselectorbtnInfo {
+    display: block;
+}
