@@ -14,7 +14,7 @@ var sensors = null;
 var sensorActive = {};
 var geolocation = null;
 var deviceorientation;
-var ps;
+var watchPositionId = null;
 
 var gear;
 
@@ -199,6 +199,7 @@ function findsensors(){
 
 function findGeolocation(){
 	updateStatus('Looking for a geolocation provider');
+    unregisterGeoListener();
 	allServices = {};
 	geolocation = null;
 	
@@ -352,8 +353,21 @@ function registersensorsListeners(api){
 
 function registerGeoListener(){
 	var params = {};
+    params.enableHighAccuracy = false;
+    params.maximumAge = 90000;
+    params.timeout = 90000;
 //	geolocation.getCurrentPosition(handlePosition, errorCB, params);
-	ps = geolocation.watchPosition(handlePosition, errorCB, params);
+    watchPositionId = geolocation.watchPosition(handlePosition, function(e){
+        errorCB(e);
+        registerGeoListener();
+    }, params
+    );
+}
+
+function unregisterGeoListener(){
+    if (geolocation && watchPositionId){
+        geolocation.clearWatch(watchPositionId);
+    }
 }
 
 function registerDoListener(){
@@ -554,6 +568,9 @@ function resizeGauges(){
 //    })
 }
 var resizeTimer=null;
+$( window ).unload(function() {
+    unregisterGeoListener();
+});
 $(document).ready(function() {
     if (typeof localStorage != "undefined" && localStorage.getItem("vehicleHubCarDevice")){
         var stored = null;
