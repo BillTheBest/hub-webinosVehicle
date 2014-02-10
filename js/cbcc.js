@@ -57,7 +57,7 @@ dataModel = [{id: 'selecter-gear', desc:'Gear' , unit: '', defaultV:'10', custom
 {id: 'selecter-range', desc:'FRP' , unit: 'km', defaultV:'547', customField: null}];
 
 
-function initializeMap() {
+function initializeMap(callback) {
     var mapOptions = {
       zoom: 4,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -73,6 +73,8 @@ function initializeMap() {
     map.fitBounds(centerBounds);
     google.maps.event.addListenerOnce(map, 'idle', function(){
         mapLoaded = true;
+        if (callback)
+            callback();
     });
     
    var mapBounds = map.getBounds();
@@ -353,9 +355,9 @@ function registersensorsListeners(api){
 
 function registerGeoListener(){
 	var params = {};
-    params.enableHighAccuracy = false;
-    params.maximumAge = 90000;
-    params.timeout = 90000;
+    params.enableHighAccuracy = true;
+    params.maximumAge = 5000;
+    params.timeout = 30000;
 //	geolocation.getCurrentPosition(handlePosition, errorCB, params);
     watchPositionId = geolocation.watchPosition(handlePosition, function(e){
         errorCB(e);
@@ -687,11 +689,12 @@ $(document).ready(function() {
 	});
 
     createGauge();
-	initializeMap();
-	webinos.session.addListener('registeredBrowser', deviceListChanged);
-	webinos.session.addListener('update', deviceListChanged);
-	startUp();
-	handleHashChange();
+	initializeMap(function(){
+        webinos.session.addListener('registeredBrowser', deviceListChanged);
+        webinos.session.addListener('update', deviceListChanged);
+        startUp();
+        handleHashChange();
+    });
 });
 
 
