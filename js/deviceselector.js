@@ -18,6 +18,14 @@ document.onkeydown = function(e){
 };
 
 $(document).ready(function() {
+	$('#deviceselectorbtn a').click(function(){
+            if(switchOpen){
+                hideSwitcher();
+            }else{
+                displaySwitcher();
+            }
+        }
+    );
 	$('body').append('<div id="appswitcher-outer" class="SwitcherDisabled"></div>');
 	$('body').append('<div id="appswitcher-inner" class="SwitcherDisabled"></div>');
 	$('#appswitcher-inner').append('<a  tabindex="1" id="appswitcher-start"/></a>');
@@ -77,6 +85,7 @@ function findGeo(){
 }
 function displaySwitcher(){
 //    updateOptions();
+    $('#deviceselectorbtn').toggleClass('enabled',true);
 	$('#appswitcher-inner').removeClass('SwitcherDisabled');
 	$('#appswitcher-outer').removeClass('SwitcherDisabled');
 	focusedElement = document.activeElement.id;
@@ -86,6 +95,7 @@ function displaySwitcher(){
 }
 
 function hideSwitcher(){
+    $('#deviceselectorbtn').toggleClass('enabled',false);
 	$('#appswitcher-inner').addClass('SwitcherDisabled');
 	$('#appswitcher-outer').addClass('SwitcherDisabled');
 	$('#'+focusedElement).focus();
